@@ -18,24 +18,14 @@ export class Buyer {
   private readonly uuid: string;
   private readonly username: string;
   private readonly password: string;
-  private readonly shoppingCart: Product[];
 
-  public constructor(
-    username: string,
-    password: string,
-    shoppingCart: Product[]
-  ) {
+  public constructor(username: string, password: string) {
     this.uuid = uuidv4();
     this.username = username;
     this.password = password;
-    this.shoppingCart = shoppingCart;
   }
 
-  public create(
-    username: string,
-    password: string,
-    shoppingCart: Product[] = []
-  ) {
+  public create(username: string, password: string) {
     const containSpace: RegExp = /\s/;
     const checkString: RegExp = /^[a-zA-Z0-9]+$/;
 
@@ -64,6 +54,6 @@ export class Buyer {
       );
     }
 
-    return new Buyer(username, password, shoppingCart);
+    return new Buyer(username, password);
   }
 }
