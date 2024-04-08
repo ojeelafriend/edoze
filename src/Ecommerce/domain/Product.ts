@@ -8,14 +8,24 @@ export class Product {
   private readonly seller: string;
   private readonly price: Price;
 
-  public constructor(name: string, price: Price, seller: string) {
-    this.uuid = uuidv4();
+  public constructor(uuid: string, name: string, price: Price, seller: string) {
+    this.uuid = uuid;
     this.name = name;
     this.price = price;
     this.seller = seller;
   }
 
-  public static create(name: string, price: number, seller: string): Product {
+  public static create({
+    uuid,
+    name,
+    price,
+    seller,
+  }: {
+    uuid?: string;
+    name: string;
+    price: number;
+    seller: string;
+  }): Product {
     if (name.length < 10 || name.length > 200) {
       throw new Error(
         name.length < 10
@@ -28,7 +38,11 @@ export class Product {
       throw new Error(`Negative numbers are not allowed`);
     }
 
-    return new Product(name, new Price(price), seller);
+    return new Product(!uuid ? uuidv4() : uuid, name, new Price(price), seller);
+  }
+
+  public getId(): string {
+    return this.uuid;
   }
 
   public publishedBy(): string {
