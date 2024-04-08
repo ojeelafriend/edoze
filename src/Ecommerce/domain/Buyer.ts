@@ -1,7 +1,5 @@
 import { uuid as uuidv4 } from "uuidv4";
 
-import { Product } from "./Product";
-
 export class Buyer {
   private readonly MIN_CHAR_USERNAME: number = process.env.MIN_USERNAME
     ? parseInt(process.env.MIN_USERNAME)
