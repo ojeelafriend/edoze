@@ -6,9 +6,10 @@ export const createProduct = async (
   name: string,
   price: number,
   seller: string
-) => {
+): Promise<Product> => {
   const product = Product.create({ name, price, seller });
   await repository.create(product);
+  return product;
 };
 
 export const listProductById = async (
@@ -30,9 +31,11 @@ export const editProduct = async (
   name: string,
   price: number,
   seller: string
-): Promise<void> => {
+): Promise<Product> => {
   const product = Product.create({ uuid, name, price, seller });
-  await repository.update(product.getId(), product);
+  await repository.update(product);
+
+  return product;
 };
 
 export const removeProduct = async (
