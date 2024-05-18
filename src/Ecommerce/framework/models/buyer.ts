@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
-const cart = new Schema(
+const item = new Schema(
   {
     productId: { type: String, require: true },
   },
@@ -11,8 +11,9 @@ const buyer = new Schema({
   uuid: { type: String, require: true },
   username: { type: String, require: true },
   password: { type: String, require: true },
-  shoppingCart: { type: [cart] },
-  gift: { type: [cart] },
+  money: { type: Number, require: true },
+  shoppingCart: [item],
+  donate: [item],
 });
 
-export default mongoose.model("Buyer", buyer);
+export default mongoose.model('Buyer', buyer);
