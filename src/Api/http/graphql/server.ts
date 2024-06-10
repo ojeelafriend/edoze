@@ -1,13 +1,56 @@
-import { ApolloServer } from '@apollo/server';
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import jwt from "jsonwebtoken";
 
-import { typeDefs as tdProduct } from './product/typeDefs';
-import { resolvers as rsProduct } from './product/resolvers';
-import { typeDefs as tdBuyer } from './buyer/typeDefs';
-import { resolvers as rsBuyer } from './buyer/resolvers';
+import { BuyerRepository } from "../../../Ecommerce/framework/BuyerRepository";
+import { typeDefs, resolvers } from "./schema";
 
-const graphqlServer = new ApolloServer({
-  typeDefs: [tdProduct, tdBuyer],
-  resolvers: [rsProduct, rsBuyer],
-});
+const repository = new BuyerRepository();
 
-export default graphqlServer;
+interface UserInterface {
+  uuid: string;
+  username: string;
+}
+
+interface MyContext {
+  user: UserInterface;
+}
+
+export async function startApolloServer() {
+  const graphqlServer = new ApolloServer<MyContext>({
+    typeDefs,
+    resolvers,
+    introspection: true,
+  });
+
+  const { url } = await startStandaloneServer(graphqlServer, {
+    context: async ({ req, res }) => {
+      const token = req.headers.authorization || "";
+      try {
+        const payload: any = jwt.verify(
+          token,
+          process.env.SECRET_JWT_KEY as string
+        );
+
+        //drop clg
+        console.log(`este es el uuid ${payload.uuid}`);
+
+        const user = await repository.listById(payload.uuid);
+
+        return {
+          user: {
+            username: user?.username || "client",
+            uuid: user?.uuid || "",
+          },
+        };
+      } catch (err: any) {
+        if (token === process.env.API_KEY)
+          return { user: { username: "client", uuid: "" } };
+
+        throw new Error(`Unauthorized`);
+      }
+    },
+  });
+
+  return url;
+}
