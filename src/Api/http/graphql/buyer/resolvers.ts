@@ -1,13 +1,9 @@
-import {
-  createBuyer,
-  editShoppingCart,
-  login,
-} from "../../../../Ecommerce/application/buyer";
-import { BuyerRepository } from "../../../../Ecommerce/framework/BuyerRepository";
+import { createBuyer, editShoppingCart, login } from '../../../../Ecommerce/application/buyer';
+import { BuyerRepository } from '../../../../Ecommerce/framework/BuyerRepository';
 
-import buyerModel from "../../../../Ecommerce/framework/models/buyer";
-import productModel from "../../../../Ecommerce/framework/models/product";
-import jwt from "jsonwebtoken";
+import buyerModel from '../../../../Ecommerce/framework/models/buyer';
+import productModel from '../../../../Ecommerce/framework/models/product';
+import jwt from 'jsonwebtoken';
 
 const repository = new BuyerRepository();
 
@@ -83,18 +79,12 @@ export const resolvers = {
   },
 
   Mutation: {
-    createAccount: async (
-      _: any,
-      { username, password }: { username: string; password: string }
-    ) => {
+    createAccount: async (_: any, { username, password }: { username: string; password: string }) => {
       const buyer = await createBuyer(repository, username, password);
 
       const { uuid } = buyer.getPersonalInfo();
 
-      const token = jwt.sign(
-        { uuid, username },
-        process.env.SECRET_JWT_KEY as string
-      );
+      const token = jwt.sign({ uuid, username }, process.env.SECRET_JWT_KEY as string);
 
       return {
         uuid,
@@ -105,10 +95,7 @@ export const resolvers = {
       };
     },
 
-    editShoppingCart: async (
-      _: any,
-      { uuid, products }: { uuid: string; products: string[] }
-    ) => {
+    editShoppingCart: async (_: any, { uuid, products }: { uuid: string; products: string[] }) => {
       return await editShoppingCart(repository, uuid, products);
     },
   },

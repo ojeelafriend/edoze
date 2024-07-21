@@ -1,9 +1,9 @@
-import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import jwt from "jsonwebtoken";
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import jwt from 'jsonwebtoken';
 
-import { BuyerRepository } from "../../../Ecommerce/framework/BuyerRepository";
-import { typeDefs, resolvers } from "./schema";
+import { BuyerRepository } from '../../../Ecommerce/framework/BuyerRepository';
+import { typeDefs, resolvers } from './schema';
 
 const repository = new BuyerRepository();
 
@@ -25,12 +25,9 @@ export async function startApolloServer() {
 
   const { url } = await startStandaloneServer(graphqlServer, {
     context: async ({ req, res }) => {
-      const token = req.headers.authorization || "";
+      const token = req.headers.authorization || '';
       try {
-        const payload: any = jwt.verify(
-          token,
-          process.env.SECRET_JWT_KEY as string
-        );
+        const payload: any = jwt.verify(token, process.env.SECRET_JWT_KEY as string);
 
         //drop clg
         console.log(`este es el uuid ${payload.uuid}`);
@@ -39,15 +36,17 @@ export async function startApolloServer() {
 
         return {
           user: {
-            username: user?.username || "client",
-            uuid: user?.uuid || "",
+            username: user?.username || 'client',
+            uuid: user?.uuid || '',
           },
         };
       } catch (err: any) {
-        if (token === process.env.API_KEY)
-          return { user: { username: "client", uuid: "" } };
+        let obj;
+        if (token === process.env.API_KEY) {
+          obj = { user: { username: 'client', uuid: '' } };
+        }
 
-        throw new Error(`Unauthorized`);
+        return obj;
       }
     },
   });
